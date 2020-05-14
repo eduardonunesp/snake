@@ -1,0 +1,26 @@
+from sys import platform
+
+IncludePath = [
+    './', 
+    '/usr/local/include',
+]
+LibsPath = [
+    '/usr/local/opt/zlib/lib'
+]   
+Libs = ['SDL2', 'SDL2_mixer', 'SDL2_image']
+CommonFlags = ['-std=c++17', '-Wall']
+Defines = []
+
+env = Environment(CPPPATH=IncludePath, CCFLAGS=CommonFlags, LIBS=Libs, LIBPATH=LibsPath, CPPDEFINES=Defines)
+
+if int(ARGUMENTS.get('debug', 0)):
+  print(" --- COMPILING WITH DEBUG MODE ---")
+  env.Append(CPPDEFINES = '_DEBUG')
+  env.Append(CCFLAGS = '-g')
+
+files = Split("""
+  src/main.cpp
+""");
+
+program = env.Program(target="basic_draw", source=files)
+env.Default(program)
