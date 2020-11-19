@@ -10,6 +10,7 @@ typedef struct {
 	window_t* window;
 	stage_t* stage;
 	snake_t* snake;
+	snake_direction_e next_direction;
 } game_t;
 
 game_t* game_init();

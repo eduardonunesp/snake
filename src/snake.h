@@ -17,6 +17,7 @@ typedef struct {
 	SDL_Texture* texture;
 	int x, y;
 	int h, w;
+	int size;
 } snake_t;
 
 snake_t* snake_init(int x, int y, int w, int h);

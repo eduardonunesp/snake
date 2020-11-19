@@ -25,6 +25,7 @@ game_t* game_init() {
 	game->window = NULL;
 	game->stage = NULL;
 	game->snake = NULL;
+	game->next_direction = SNAKE_MOVE_RIGHT;
 
 	return game;
 }
@@ -42,7 +43,7 @@ game_status_e game_create(game_t* game) {
 
 	game->window = window;
 
-	snake_t* snake = snake_init(0, 0, 20, 20);
+	snake_t* snake = snake_init(10, 10, 20, 20);
 
 	if (!snake) {
 		return GAME_STATUS_MEMORY_ALLOC_FAILED;
@@ -58,7 +59,7 @@ game_status_e game_create(game_t* game) {
 game_status_e game_update(game_t* game) {
 	assert(game);
 
-	snake_move(game->snake, SNAKE_MOVE_RIGHT);
+	snake_move(game->snake, game->next_direction);
 
 	return GAME_STATUS_SUCCESS;
 }
@@ -75,6 +76,31 @@ game_status_e game_run(game_t* game) {
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				game->window->running = 0;
+			}
+
+			switch (e.type) {
+			case SDL_KEYUP:
+
+				switch (e.key.keysym.sym) {
+				case SDLK_RIGHT:
+					game->next_direction = SNAKE_MOVE_RIGHT;
+					break;
+				case SDLK_LEFT:
+					game->next_direction = SNAKE_MOVE_LEFT;
+					break;
+				case SDLK_UP:
+					game->next_direction = SNAKE_MOVE_UP;
+					break;
+				case SDLK_DOWN:
+					game->next_direction = SNAKE_MOVE_DOWN;
+					break;
+				default:
+					break;
+				}
+
+				break;
+			default:
+				break;
 			}
 		}
 

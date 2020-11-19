@@ -8,10 +8,13 @@ snake_t* snake_init(int x, int y, int w, int h) {
 
 	assert(snake);
 
-	snake->x = x;
-	snake->y = y;
 	snake->w = w;
 	snake->h = h;
+
+	snake->x = x * w;
+	snake->y = y * h;
+
+	snake->size = 3;
 
 	return snake;
 }
@@ -41,10 +44,12 @@ game_status_e snake_draw(window_t* window, snake_t* snake) {
 	assert(window);
 	assert(snake);
 
-	SDL_Rect src = { 0, 0, snake->w, snake->h };
-	SDL_Rect dst = { snake->x, snake->y, snake->w, snake->h };
+	for (int i = 1; i <= snake->size; i++) {
+		SDL_Rect src = { 0, 0, snake->w, snake->h };
+		SDL_Rect dst = { snake->x, snake->y, snake->w, snake->h };
 
-	SDL_RenderCopy(window->renderer, snake->texture, &src, &dst);
+		SDL_RenderCopy(window->renderer, snake->texture, &src, &dst);
+	}
 
 	return GAME_STATUS_SUCCESS;
 }
