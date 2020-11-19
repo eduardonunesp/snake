@@ -8,7 +8,7 @@ LibsPath = [
     '/usr/local/opt/zlib/lib'
 ]   
 Libs = ['SDL2', 'SDL2_mixer', 'SDL2_image']
-CommonFlags = ['-std=c++17', '-Wall']
+CommonFlags = ['-Wall']
 Defines = []
 
 env = Environment(CPPPATH=IncludePath, CCFLAGS=CommonFlags, LIBS=Libs, LIBPATH=LibsPath, CPPDEFINES=Defines)
@@ -19,8 +19,13 @@ if int(ARGUMENTS.get('debug', 0)):
   env.Append(CCFLAGS = '-g')
 
 files = Split("""
-  src/main.cpp
+  src/stage.c
+  src/snake.c
+  src/game.c
+  src/window.c
+  src/list.c
+  src/main.c
 """);
 
-program = env.Program(target="basic_draw", source=files)
+program = env.Program(target="snake", source=files)
 env.Default(program)

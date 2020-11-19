@@ -20,3 +20,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 iie
+gamec
+.vscode
+snake
