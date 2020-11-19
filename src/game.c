@@ -94,6 +94,9 @@ game_status_e game_run(game_t* game) {
 				case SDLK_DOWN:
 					game->next_direction = SNAKE_MOVE_DOWN;
 					break;
+				case SDLK_a:
+					snake_push(game->window, game->snake);
+					break;
 				default:
 					break;
 				}

@@ -13,16 +13,20 @@ typedef enum {
 	SNAKE_MOVE_UP,
 } snake_direction_e;
 
-typedef struct {
+typedef struct snake {
 	SDL_Texture* texture;
 	int x, y;
 	int h, w;
 	int size;
+	snake_direction_e current_direction;
+	struct snake* next;
 } snake_t;
 
 snake_t* snake_init(int x, int y, int w, int h);
 
 game_status_e snake_create(window_t* window, snake_t* snake);
+
+game_status_e snake_push(window_t* window, snake_t* head);
 
 void snake_move(snake_t* snake, snake_direction_e next_direction);
 
