@@ -1,7 +1,6 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
-#include "enums.h"
 #include <SDL2/SDL.h>
 
 typedef struct {
@@ -13,8 +12,8 @@ typedef struct {
 
 window_t* window_init(int width, int height);
 
-game_status_e window_create(window_t* window);
+void window_create(window_t* window);
 
-game_status_e window_destroy(window_t* window);
+void window_destroy(window_t* window);
 
 #endif // __WINDOW_H__

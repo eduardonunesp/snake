@@ -19,11 +19,9 @@ if int(ARGUMENTS.get('debug', 0)):
   env.Append(CCFLAGS = '-g')
 
 files = Split("""
-  src/stage.c
-  src/snake.c
-  src/game.c
   src/window.c
-  src/list.c
+  src/game.c
+  src/snake.c
   src/main.c
 """);
 

@@ -3,7 +3,6 @@
 #define __SNAKE_H__
 
 #include "SDL2/SDL.h"
-#include "enums.h"
 #include "window.h"
 
 typedef enum {
@@ -14,24 +13,23 @@ typedef enum {
 } snake_direction_e;
 
 typedef struct snake {
-	SDL_Texture* texture;
+	SDL_Window* window;
 	int x, y;
 	int h, w;
-	int size;
 	snake_direction_e current_direction;
 	struct snake* next;
 } snake_t;
 
 snake_t* snake_init(int x, int y, int w, int h);
 
-game_status_e snake_create(window_t* window, snake_t* snake);
+void snake_push_front(snake_t** head, int x, int y);
 
-game_status_e snake_push(window_t* window, snake_t* head);
+void snake_remove_last(snake_t* head);
 
-void snake_move(snake_t* snake, snake_direction_e next_direction);
+void snake_update(snake_t* snake);
 
-game_status_e snake_draw(window_t* window, snake_t* snake);
+void snake_draw(window_t* window, snake_t* snake);
 
-game_status_e snake_destroy(snake_t* snake);
+void snake_destroy(snake_t* snake);
 
 #endif // __SNAKE_H__

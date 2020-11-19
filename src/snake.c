@@ -20,77 +20,36 @@ snake_t* snake_init(int x, int y, int w, int h) {
 	return snake;
 }
 
-game_status_e snake_create(window_t* window, snake_t* snake) {
-	assert(window);
-	assert(snake);
-
-	SDL_Surface* surface = IMG_Load("resources/images/block.png");
-
-	if (!surface) {
-		return GAME_STATUS_FAILE_LOAD_SURFACE;
-	}
-
-	snake->texture = SDL_CreateTextureFromSurface(window->renderer, surface);
-
-	if (!snake->texture) {
-		return GAME_STATUS_FAILE_LOAD_TEXTURE;
-	}
-
-	SDL_FreeSurface(surface);
-
-	return GAME_STATUS_SUCCESS;
-}
-
-game_status_e snake_push(window_t* window, snake_t* head) {
-	assert(window);
+void snake_push_front(snake_t** head, int x, int y) {
 	assert(head);
 
-	CHECKER_INIT(GAME_STATUS_SUCCESS);
+	snake_t* new_head = snake_init(x, y, 20, 20);
 
+	new_head->next = (*head);
+	(*head) = new_head;
+}
+
+void snake_remove_last(snake_t* head) {
+	if (head->next == NULL) {
+		free(head);
+	}
+
+	/* get to the second to last node in the list */
 	snake_t* current = head;
-
-	while (current->next != NULL) {
+	while (current->next->next != NULL) {
 		current = current->next;
 	}
 
-	/* now we can add a new variable */
-	current->next = snake_init(0, 0, 20, 20);
-	assert(current->next);
-
-	CHECKER_RUN(snake_create(window, current->next));
-
-	current->next->next = NULL;
-
-	CHECKER_END();
+	/* now current points to the second to last item of the list, so let's remove current->next */
+	free(current->next);
+	current->next = NULL;
 }
 
-game_status_e snake_draw(window_t* window, snake_t* snake) {
-	assert(window);
-	assert(snake);
-
-	SDL_Rect src = { 0, 0, snake->w, snake->h };
-	SDL_Rect dst = { snake->x, snake->y, snake->w, snake->h };
-
-	SDL_RenderCopy(window->renderer, snake->texture, &src, &dst);
-
-	snake_t* current = snake;
-
-	while (current->next != NULL) {
-		current = current->next;
-		SDL_Rect src = { 0, 0, current->w, current->h };
-		SDL_Rect dst = { current->x, current->y, current->w, current->h };
-		SDL_RenderCopy(window->renderer, current->texture, &src, &dst);
-	}
-
-	return GAME_STATUS_SUCCESS;
-}
-
-void snake_move(snake_t* snake, snake_direction_e next_direction) {
+void snake_update(snake_t* snake) {
 	assert(snake);
 
 	int x, y = 0;
-
-	switch (next_direction)
+	switch (snake->current_direction)
 	{
 	case SNAKE_MOVE_RIGHT:
 		x = 1;
@@ -112,52 +71,31 @@ void snake_move(snake_t* snake, snake_direction_e next_direction) {
 		break;
 	}
 
-	snake->x = snake->x + (x * snake->w);
-	snake->y = snake->y + (y * snake->h);
+	x = snake->x + (x * snake->w);
+	y = snake->y + (y * snake->h);
+	snake_push_front(&snake, x, y);
+}
+
+void snake_draw(window_t* window, snake_t* snake) {
+	assert(window);
+	assert(snake);
 
 	snake_t* current = snake;
-	snake_t* prev = current;
-
 	while (current->next != NULL) {
 		current = current->next;
+		DBG("SD");
+		// SDL_Rect dst = { current->x, current->y, current->w, current->h };
+		// SDL_SetRenderDrawColor(window->renderer, 255, 255, 255, 255);
+		// SDL_RenderDrawRect(window->renderer, &dst);
+		// SDL_SetRenderDrawColor(window->renderer, 0, 0, 0, 255);
 
-		int x, y = 0;
+		// if (current->next == NULL) {
+		// 	break;
+		// }
 
-		switch (prev->current_direction)
-		{
-		case SNAKE_MOVE_RIGHT:
-			x = 1;
-			y = 0;
-			break;
-		case SNAKE_MOVE_LEFT:
-			x = -1;
-			y = 0;
-			break;
-		case SNAKE_MOVE_UP:
-			x = 0;
-			y = -1;
-			break;
-		case SNAKE_MOVE_DOWN:
-			x = 0;
-			y = 1;
-			break;
-		default:
-			break;
-		}
-
-		current->x = prev->x + (x * 20);
-		current->y = prev->y + (y * 20);
-
-		if (current->next) {
-			current->next->current_direction = next_direction;
-		}
-
-		prev = current;
 	}
 }
 
-game_status_e snake_destroy(snake_t* snake) {
+void snake_destroy(snake_t* snake) {
 	assert(snake);
-	SDL_DestroyTexture(snake->texture);
-	return GAME_STATUS_SUCCESS;
 }
