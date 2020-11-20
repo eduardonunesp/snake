@@ -4,7 +4,13 @@
 #include <time.h>
 #include <SDL2/SDL.h>
 
-#define LOG(fmt, ...) fprintf(stdout, fmt, __VA_ARGS__)
+#ifdef _DEBUG
+#define LOG(msg) printf(msg);
+#define LOGF(fmt, ...) fprintf(stdout, fmt, __VA_ARGS__)
+#else
+#define LOG(fmt)
+#define LOGF(fmt, ...)
+#endif
 
 #define GAME_TITLE "Snake"
 #define GAME_TITLE_DEAD "Snake (DEAD)"
@@ -71,10 +77,12 @@ void snake_insert_head(segment_t** head, int grid_x, int grid_y) {
 	new_head->y = grid_y;
 	new_head->next = *head;
 	*head = new_head;
+	LOGF("Add segment %p\n", new_head);
 }
 
 void snake_remove_tail(segment_t* head) {
 	if (head->next == NULL) {
+		LOGF("Remove segment %p\n", head);
 		free(head);
 	}
 
@@ -83,8 +91,24 @@ void snake_remove_tail(segment_t* head) {
 		current = current->next;
 	}
 
+	LOGF("Remove segment %p\n", current->next);
+
 	free(current->next);
 	current->next = NULL;
+}
+
+void snake_destroy(segment_t** head) {
+	segment_t* current = *head;
+	segment_t* next;
+
+	while (current != NULL) {
+		LOGF("Destroy and remove segment %p\n", current);
+		next = current->next;
+		free(current);
+		current = next;
+	}
+
+	*head = NULL;
 }
 
 void draw_snake_body(SDL_Renderer* renderer, segment_t* head) {
@@ -155,6 +179,7 @@ segment_t* add_food(snake_t* snake) {
 	new_food->seg_type = SEG_FOOD;
 	new_food->x = grid_x;
 	new_food->y = grid_y;
+	LOGF("New food at %d-%d\n", new_food->x, new_food->y);
 	return new_food;
 }
 
@@ -228,9 +253,12 @@ int main(int argc, char* argv[]) {
 	srand(time(0));
 	snake_t* snake = init_snake(SNAKE_INIT_X, SNAKE_INIT_Y);
 	segment_t* food = NULL;
+	int fruits = 0;
 
 	win = SDL_CreateWindow(GAME_TITLE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+
+	LOG("Game start\n");
 
 	unsigned int last_time = 0, current_time;
 	while (running) {
@@ -247,6 +275,18 @@ int main(int argc, char* argv[]) {
 			switch (event.type) {
 			case SDL_KEYUP:
 				switch (event.key.keysym.sym) {
+				case SDLK_r:
+					if (dead) {
+						fruits = 0;
+						snake_destroy(&snake->head);
+						snake = init_snake(SNAKE_INIT_X, SNAKE_INIT_Y);
+						free(food);
+						food = NULL;
+						dead = false;
+						SDL_SetWindowTitle(win, GAME_TITLE);
+						LOG("Game reset\n");
+					}
+					break;
 				case SDLK_RIGHT:
 					if (snake->next_direction != DIR_LEFT) {
 						snake->next_direction = DIR_RIGHT;
@@ -274,14 +314,20 @@ int main(int argc, char* argv[]) {
 				default:
 					break;
 				}
+
+				LOGF("Next direction %d\n", snake->next_direction);
 			}
 		}
 
 		current_time = SDL_GetTicks();
 		if (current_time > last_time && !dead) {
-			last_time = current_time + 500;
+			last_time = current_time + (500 - (fruits * 10));
 			update_snake(snake, &food);
-			if (!food) food = add_food(snake);
+			if (!food) {
+				fruits++;
+				food = add_food(snake);
+			}
+
 			direction_selected = false;
 		}
 
@@ -295,6 +341,8 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
+
+	LOG("Game end, bye!\n");
 
 	return 0;
 }
