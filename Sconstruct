@@ -1,12 +1,12 @@
 from sys import platform
 
 IncludePath = [
-    './', 
+    './',
     '/usr/local/include',
 ]
 LibsPath = [
     '/usr/local/opt/zlib/lib'
-]   
+]
 Libs = ['SDL2', 'SDL2_mixer', 'SDL2_image']
 CommonFlags = ['-Wall']
 Defines = []
@@ -20,6 +20,11 @@ if int(ARGUMENTS.get('debug', 0)):
 
 files = Split("""
   src/main.c
+  src/video.c
+  src/events.c
+  src/game.c
+  src/snake.c
+  src/food.c
 """);
 
 program = env.Program(target="snake", source=files)
