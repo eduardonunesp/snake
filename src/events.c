@@ -12,10 +12,10 @@ int events_init() {
 
 void events_update() {
 	if (events->ev.type == SDL_QUIT) {
-		running = false;
+		game->running = false;
 	}
 
-	if (direction_selected) {
+	if (game->direction_selected) {
 		return;
 	}
 
@@ -23,13 +23,13 @@ void events_update() {
 		case SDL_KEYUP:
 		switch (events->ev.key.keysym.sym) {
 			case SDLK_r:
-			if (dead) {
-				fruits = 0;
+			if (game->dead) {
+				game->fruits = 0;
 				snake_destroy(&snake->head);
 				snake = init_snake(SNAKE_INIT_X, SNAKE_INIT_Y);
 				free(food);
 				food = NULL;
-				dead = false;
+				game->dead = false;
 				SDL_SetWindowTitle(video->win, GAME_TITLE);
 				LOG("Game reset\n");
 			}
@@ -37,25 +37,25 @@ void events_update() {
 			case SDLK_RIGHT:
 			if (snake->next_direction != DIR_LEFT) {
 				snake->next_direction = DIR_RIGHT;
-				direction_selected = true;
+				game->direction_selected = true;
 			}
 			break;
 			case SDLK_LEFT:
 			if (snake->next_direction != DIR_RIGHT) {
 				snake->next_direction = DIR_LEFT;
-				direction_selected = true;
+				game->direction_selected = true;
 			}
 			break;
 			case SDLK_UP:
 			if (snake->next_direction != DIR_DOWN) {
 				snake->next_direction = DIR_UP;
-				direction_selected = true;
+				game->direction_selected = true;
 			}
 			break;
 			case SDLK_DOWN:
 			if (snake->next_direction != DIR_UP) {
 				snake->next_direction = DIR_DOWN;
-				direction_selected = true;
+				game->direction_selected = true;
 			}
 			break;
 			default:

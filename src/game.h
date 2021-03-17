@@ -24,10 +24,19 @@
 #define SNAKE_INIT_X 5
 #define SNAKE_INIT_Y 5
 
-extern bool running;
-extern int fruits;
-extern bool dead;
-extern bool direction_selected;
+typedef struct game_s {
+	unsigned int last_time;
+	unsigned int current_time;
+	bool running;
+	int fruits;
+	bool dead;
+	bool direction_selected;
+} game_t;
+
+extern game_t *game;
+
+int game_init();
+void game_update();
 
 typedef struct video_s {
 	SDL_Window* win;

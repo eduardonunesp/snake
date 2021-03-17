@@ -63,7 +63,7 @@ void draw_snake_body(SDL_Renderer* renderer, segment_t* head)
 	while (1) {
 		SDL_Rect dst = {current->x * SEGMENT_WIDTH, current->y * SEGMENT_WIDTH, SEGMENT_WIDTH, SEGMENT_HEIGHT};
 
-		if (dead) {
+		if (game->dead) {
 			SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
 		} 		else {
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -134,7 +134,7 @@ void update_snake(snake_t* snake, segment_t** food)
 		break;
 		case EAT_ITSELF:
 		case EAT_WALL:
-		dead = true;
+		game->dead = true;
 		SDL_SetWindowTitle(video->win, GAME_TITLE_DEAD);
 		break;
 		case EAT_FOOD:
