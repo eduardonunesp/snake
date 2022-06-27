@@ -7,7 +7,7 @@ IncludePath = [
 LibsPath = [
     '/usr/local/opt/zlib/lib'
 ]
-Libs = ['SDL2', 'SDL2_mixer', 'SDL2_image']
+Libs = ['SDL2']
 CommonFlags = ['-Wall']
 Defines = []
 
